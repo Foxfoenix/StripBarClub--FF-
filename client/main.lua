@@ -183,3 +183,45 @@ RegisterNetEvent('ff:fridgeMenu')
 AddEventHandler('ff:fridgeMenu', function ()
   exports.ox_inventory:openInventory('stash', {id='SBC'})
 end)
+
+---bossMenu
+Citizen.CreateThread(function ()
+  while true do
+    local interval = 1000
+    for _, v in pairs(Config.Frigot.FrigotCoords) do
+      if ESX.PlayerData.job and ESX.PlayerData.job.name == Config.Job.NameOfJob then
+        local playerPos = GetEntityCoords(PlayerPedId())
+        local distance = #(playerPos - v)
+        if distance <= 2 then
+        interval = 100000000
+        exports.ox_target:addBoxZone({
+          coords =  vec3(436.8276, -990.5045, 30.6896), -- Coordonnées ou le patron pourra ouvrir son menu BOSS
+          size = vec3(1, 1.5, 1.5), -- Na pas modifier 
+          rotation = 0, -- Na pas modifier 
+          debug = false, -- Na pas modifier 
+           options = {
+            {
+                name = Config.BossMenu.BlipName, -- Nom afficher a l'acitvation du target 
+                event = 'esx_SBCjob:bossSBC', --esx_Nomjob sans majuscule
+                icon = 'fa-solid fa-computer', -- Icone modifiable via le lien ici --> https://fontawesome.com/v6/icons?o=r&s=solid
+                label = 'Gestion', -- Nom du menu une fois ouvert
+                distance = 1.5, -- Na pas modifier 
+            },
+
+          }
+        })
+        end
+      end
+    end
+    Wait(interval)
+  end
+end)
+
+
+
+AddEventHandler('esx_SBCjob:bossSBC', function() -- Modifier le template par votre job
+  if ESX.PlayerData.job and ESX.PlayerData.job.name == 'stripbarclub' then -- Modifier le template par votre job
+  TriggerEvent('esx_society:openBossMenu', 'stripbarclub', function(data, menu) -- Modifier le template par votre job
+  end, {wash = false})
+  end
+end)
